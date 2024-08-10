@@ -80,3 +80,39 @@ function getArea(shape: Shape): number {
 }
 
 console.log(getArea("circle"));
+
+// Array Types
+
+const nums: number[] = [];
+const names: Array<string> = ["John"];
+
+console.log("show nums", nums);
+console.log("show names", names);
+
+// Using objects as function return value
+function printUser(): { name: string; age: number; location: string } {
+  return {
+    name: "Alex",
+    age: 19,
+    location: "USA",
+  };
+}
+
+console.log(printUser());
+
+// Type Aliases
+
+type User = {
+  name: string;
+  age: number;
+  location: string;
+};
+
+function printUser2(userData: User): User {
+  return userData;
+}
+
+console.log(
+  "testing Type Aliases",
+  printUser2({ name: "Alex", age: 19, location: "USA" })
+);
