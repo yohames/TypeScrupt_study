@@ -102,13 +102,13 @@ console.log(printUser());
 
 // Type Aliases
 
-type User = {
+type UserAliases = {
   name: string;
   age: number;
   location: string;
 };
 
-function printUser2(userData: User): User {
+function printUser2(userData: UserAliases): UserAliases {
   return userData;
 }
 
@@ -270,3 +270,5 @@ console.log(employeeCode);
 
 let value: any = "hello";
 let stringLength = (value as string).length; // Assert value as a string
+
+
