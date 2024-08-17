@@ -251,6 +251,16 @@ console.log(product1, qty1, product2, qty2);
 
 // Enum Types
 
+/**
+ * Enum is a way to organize a collection of related values.
+ * Enums are used to define a set of named constants.
+ * They are useful for representing a fixed set of values and improving code readability
+ * and maintainability.
+ * 
+ * Type safety:
+ * Ensuring that only valid values are used in your code.
+ */
+
 enum enumColor {
   Red,
   Green = 'abebe',
