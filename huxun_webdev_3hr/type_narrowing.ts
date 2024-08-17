@@ -193,7 +193,7 @@ type SquareNarrow = {
 
 type ShapeNarrow = CircleNarrow | SquareNarrow;
 
-function getArea(shape: ShapeNarrow): number {
+function getArea1(shape: ShapeNarrow): number {
   switch (shape.kind) {
     case "circle":
       return Math.PI * shape.radius ** 2;
@@ -204,8 +204,8 @@ function getArea(shape: ShapeNarrow): number {
 
 const circleNarrow: CircleNarrow = { kind: "circle", radius: 5 };
 const squareNarrow: SquareNarrow = { kind: "square", sideLength: 5 };
-console.log(getArea(circleNarrow)); // Output: 78.54
-console.log(getArea(squareNarrow)); // Output: 25
+console.log(getArea1(circleNarrow)); // Output: 78.54
+console.log(getArea1(squareNarrow)); // Output: 25
 
 // Type Narrowing with Type Assertion
 // Type assertion is a way to narrow down the type of a variable in TypeScript.
