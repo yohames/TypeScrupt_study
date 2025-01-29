@@ -67,3 +67,69 @@ const printSummary = (vehicle: Reportable): void => {
 
 printSummary(oldCivic);
 printSummary(mirinda);
+
+// ===========================================================
+// ======================== Interface ========================
+// ===========================================================
+
+interface User {
+  readonly dbId: number; // readonly property
+  name: string;
+  age: number;
+  email: string;
+  address: string;
+  googleId?: string; // optional property
+  startTrial: () => void; // function property
+  // startTrial(): void; // another way of defining a function property
+  getCoupon(couponname: string, couponNumber: number): void; // function property with arguments
+}
+
+const hitesh: User = {
+  dbId: 1,
+  name: "Hitesh",
+  age: 24,
+  email: "abebe@gmail.com",
+  address: "Addis Ababa",
+  startTrial() {
+    console.log(this.name + " started trial");
+  },
+  getCoupon(name: string, num: number) {
+    console.log(this.name + " got coupon " + name, "with number " + num + "!");
+  },
+};
+
+hitesh.startTrial();
+hitesh.getCoupon("50% off", 50);
+
+// ===========================================================
+// =================== REOPENING INTERFACE ===================
+// ===========================================================
+
+// We can reopen an interface and add more properties to it
+interface User1 {
+  readonly dbId: number;
+  name: string;
+  age: number;
+  email: string;
+}
+
+interface Admin extends User1 {
+  phone: string;
+}
+
+const user1: User1 = {
+  dbId: 1,
+  name: "Hitesh",
+  age: 24,
+  email: "abebe@gmail.com",
+};
+
+const adminUser: Admin = {
+  dbId: 2,
+  name: "Admin",
+  age: 24,
+  email: "admin@gmail.com",
+  phone: "123456789",
+};
+
+
