@@ -478,3 +478,14 @@ console.log(BooleanLikeHeterogeneousEnum.No); // Output: 0
 console.log(BooleanLikeHeterogeneousEnum.Yes); // Output: YES
 
 */
+
+// ===========================================
+// ================== Unions =================
+// ===========================================
+
+// Unions throw error if Property 'company_address' does not exist on type 'User | Company'. because it is not a common property of User and Company classes or in other words, not a union.
+
+/*
+in short union is a way to define a variable that can have multiple types but only that can be found in both types
+*/
+
