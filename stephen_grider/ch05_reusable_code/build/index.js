@@ -1,12 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const node_fs_1 = require("node:fs");
-const matches = (0, node_fs_1.readFileSync)("football.csv", {
-    encoding: "utf-8",
-});
-const arrayOfGames = matches.split("\n").map((e) => {
-    return e.split(",");
-});
+const CsvFileReader_1 = require("./CsvFileReader");
+const matches = new CsvFileReader_1.CsvFileReader("football.csv");
+matches.readFile();
 let manUnitedWins = 0;
 var MatchResult;
 (function (MatchResult) {
@@ -14,7 +10,7 @@ var MatchResult;
     MatchResult["AwayWin"] = "A";
     MatchResult["Draw"] = "D";
 })(MatchResult || (MatchResult = {}));
-for (let match of arrayOfGames) {
+for (let match of matches.data) {
     if (match[1] === "Man United" && match[5] === MatchResult.HomeWin) {
         manUnitedWins++;
     }
