@@ -27,15 +27,26 @@
  * However, it is easy to understand and implement, making it useful for educational purposes.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const Sorter_1 = require("./Sorter");
+// import { Sorter } from "./Sorter"; // no need to import Sorter class because we implement an abstract class Sorter in each class
 const NumbersCollection_1 = require("./NumbersCollection");
 const CharactersCollection_1 = require("./CharactersCollection");
+const LinkedList_1 = require("./LinkedList");
 const randomArray = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100));
 const numbers = new NumbersCollection_1.NumbersCollection(randomArray);
-const sortedNumbers = new Sorter_1.Sorter(numbers);
-sortedNumbers.sort();
+// const sortedNumbers = new Sorter(numbers);// replaced by abstract class Sorter, so no need to create an instance of Sorter
+numbers.sort();
 console.log("Sort Numbers:", numbers.data);
 const chars = new CharactersCollection_1.CharactersCollection("baXay");
-const sortedChars = new Sorter_1.Sorter(chars);
-sortedChars.sort();
-console.log("Sort Numbers:", chars.data);
+// const sortedChars = new Sorter(chars); // replaced by abstract class Sorter, so no need to create an instance of Sorter
+chars.sort();
+// console.log("Sort Numbers:", chars.data);// replaced by abstract class Sorter, so no need to create an instance of Sorter
+const linkedList = new LinkedList_1.LinkedList();
+linkedList.add(500);
+linkedList.add(-10);
+linkedList.add(-3);
+linkedList.add(4);
+linkedList.add(-89);
+linkedList.print();
+// const sortedLinkedList = new Sorter(linkedList);// replaced by abstract class Sorter, so no need to create an instance of Sorter
+linkedList.sort();
+linkedList.print();
