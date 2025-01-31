@@ -35,7 +35,7 @@ const numbers = new NumbersCollection_1.NumbersCollection(randomArray);
 const sortedNumbers = new Sorter_1.Sorter(numbers);
 sortedNumbers.sort();
 console.log("Sort Numbers:", numbers.data);
-const chars = new CharactersCollection_1.CharactersCollection("randomArray");
+const chars = new CharactersCollection_1.CharactersCollection("baXay");
 const sortedChars = new Sorter_1.Sorter(chars);
 sortedChars.sort();
 console.log("Sort Numbers:", chars.data);

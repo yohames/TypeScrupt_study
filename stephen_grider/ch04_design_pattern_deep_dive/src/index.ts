@@ -38,7 +38,8 @@ const sortedNumbers = new Sorter(numbers);
 sortedNumbers.sort();
 console.log("Sort Numbers:", numbers.data);
 
-const chars = new CharactersCollection("randomArray");
+const chars = new CharactersCollection("baXay");
 const sortedChars = new Sorter(chars);
 sortedChars.sort();
 console.log("Sort Numbers:", chars.data);
+
