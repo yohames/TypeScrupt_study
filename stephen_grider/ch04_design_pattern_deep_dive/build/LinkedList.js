@@ -59,6 +59,15 @@ class LinkedList extends Sorter_1.Sorter {
         }
         return count;
     }
+    print() {
+        let current = this.head;
+        let list = [];
+        while (current) {
+            list.push(current.data);
+            current = current.next;
+        }
+        console.log(list.join(" -> "));
+    }
     add(data) {
         const node = new LinkedListNode(data);
         if (!this.head) {
@@ -76,7 +85,7 @@ class LinkedList extends Sorter_1.Sorter {
         if (!tail)
             throw new Error("Index out of bouds");
         let count = 0;
-        while (tail.next) {
+        while (tail) {
             if (count == index) {
                 return tail;
             }
@@ -85,15 +94,6 @@ class LinkedList extends Sorter_1.Sorter {
         }
         return null;
         // throw new Error("Index out of bounds Final Error");
-    }
-    print() {
-        let current = this.head;
-        let list = [];
-        while (current) {
-            list.push(current.data);
-            current = current.next;
-        }
-        console.log(list.join(" -> "));
     }
     compare(leftIndex, rightIndex) {
         const leftNode = this.at(leftIndex);

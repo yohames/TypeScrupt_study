@@ -31,15 +31,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const NumbersCollection_1 = require("./NumbersCollection");
 const CharactersCollection_1 = require("./CharactersCollection");
 const LinkedList_1 = require("./LinkedList");
-const randomArray = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100));
+// ============ Numbers ============
+const randomArray = Array.from({ length: 5 }, () => Math.floor(Math.random() * 100));
+console.log("Random Numbers:", randomArray);
 const numbers = new NumbersCollection_1.NumbersCollection(randomArray);
 // const sortedNumbers = new Sorter(numbers);// replaced by abstract class Sorter, so no need to create an instance of Sorter
 numbers.sort();
-console.log("Sort Numbers:", numbers.data);
+console.log("Random Numbers:", randomArray);
+// ============ String ============
 const chars = new CharactersCollection_1.CharactersCollection("baXay");
 // const sortedChars = new Sorter(chars); // replaced by abstract class Sorter, so no need to create an instance of Sorter
 chars.sort();
-// console.log("Sort Numbers:", chars.data);// replaced by abstract class Sorter, so no need to create an instance of Sorter
+console.log("Sort String: baXay");
+console.log("Sort String:", chars.data);
+// ============ LinkedList ============
 const linkedList = new LinkedList_1.LinkedList();
 linkedList.add(500);
 linkedList.add(-10);
@@ -47,6 +52,7 @@ linkedList.add(-3);
 linkedList.add(4);
 linkedList.add(-89);
 linkedList.print();
+console.log("linkedlist length", linkedList.length);
 // const sortedLinkedList = new Sorter(linkedList);// replaced by abstract class Sorter, so no need to create an instance of Sorter
 linkedList.sort();
 linkedList.print();

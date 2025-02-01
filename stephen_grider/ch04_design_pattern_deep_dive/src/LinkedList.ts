@@ -62,6 +62,16 @@ export class LinkedList extends Sorter {
     return count;
   }
 
+  print(): void {
+    let current = this.head;
+    let list: number[] = [];
+    while (current) {
+      list.push(current.data);
+      current = current.next;
+    }
+    console.log(list.join(" -> "));
+  }
+
   add(data: number) {
     const node = new LinkedListNode(data);
     if (!this.head) {
@@ -80,7 +90,7 @@ export class LinkedList extends Sorter {
     if (!tail) throw new Error("Index out of bouds");
 
     let count = 0;
-    while (tail.next) {
+    while (tail) {
       if (count == index) {
         return tail;
       }
@@ -91,19 +101,10 @@ export class LinkedList extends Sorter {
     // throw new Error("Index out of bounds Final Error");
   }
 
-  print(): void {
-    let current = this.head;
-    let list: number[] = [];
-    while (current) {
-      list.push(current.data);
-      current = current.next;
-    }
-    console.log(list.join(" -> "));
-  }
-
   compare(leftIndex: number, rightIndex: number): boolean {
     const leftNode = this.at(leftIndex);
     const rightNode = this.at(rightIndex);
+
 
     if (!leftNode || !rightNode) return false;
     return leftNode?.data > rightNode?.data;
