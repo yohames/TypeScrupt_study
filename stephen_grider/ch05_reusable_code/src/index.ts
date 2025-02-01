@@ -6,7 +6,7 @@ matches.readFile();
 
 let manUnitedWins = 0;
 
-enum MatchResult {
+const enum MatchResult {
   HomeWin = "H",
   AwayWin = "A",
   Draw = "D",
