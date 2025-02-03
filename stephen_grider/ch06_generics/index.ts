@@ -1,25 +1,91 @@
-class ArrayOfNumbers {
-  constructor(public collection: number[]) {}
+// class ArrayOfNumbers {
+//   constructor(public collection: number[]) {}
 
-  get(index: number): number {
-    return this.collection[index];
+//   get(index: number): number {
+//     return this.collection[index];
+//   }
+// }
+
+// class ArrayOfStrings {
+//   constructor(public collection: string[]) {}
+
+//   get(index: number): string {
+//     return this.collection[index];
+//   }
+// }
+
+// class ArrayofAnything<T> {
+//   constructor(public collection: T[]) {}
+
+//   get(index: number): T {
+//     return this.collection[index];
+//   }
+// }
+
+// const arr = new ArrayofAnything(["a", "b", "c"]);
+
+
+class ArrayOfAny<T>{
+  constructor(public collection: T[]){}
+
+  get(index: number): T{
+      return this.collection[index]
+  }
+}
+ 
+const a = [23, 5,14, 55, 88,7,23];
+
+const b = new ArrayOfAny(a);
+
+console.log(b.get(2));
+
+// Generics with Functions
+
+function printAnything<T>(arr: T): void{
+  console.log(arr);
+}
+
+
+printAnything([[3], [4, [5, ['a']]], [5], [6], [7], 'abebe']);// Used type inference to determine the type of T, but it is better to explicitly define the type of T because it sometimes can help to catch errors early on.
+
+
+
+// Generic Constraints
+
+class Car {
+  print(){
+      console.log('I am a car')
   }
 }
 
-class ArrayOfStrings {
-  constructor(public collection: string[]) {}
-
-  get(index: number): string {
-    return this.collection[index];
+class House {
+  print(){
+      console.log('I am a house')
   }
 }
 
-class ArrayofAnything<T> {
-  constructor(public collection: T[]) {}
+interface Printable{
+  print(): void;
+}
 
-  get(index: number): T {
-    return this.collection[index];
+function printHousesOrCars<T extends Printable>(arr: T[]): void{
+  for(let i = 0; i < arr.length; i++){
+      arr[i].print();
   }
 }
 
-const arr = new ArrayofAnything(["a", "b", "c"]);
+printHousesOrCars<Car>([new House()]);// This will work because both House and Car have the print method.
+// printHousesOrCars([1, 2, 3, 4, 5]);// This will not work because the numbers do not have the print method.
+
+
+const routes = Object.freeze({
+  home: '/',
+  about: '/about',
+  contact: '/contact'
+})
+
+function goto(route: keyof typeof routes){
+  return routes[route];
+}
+
+console.log(goto('home'));
