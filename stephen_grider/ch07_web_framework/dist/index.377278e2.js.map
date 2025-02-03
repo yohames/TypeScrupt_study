@@ -1,0 +1,1 @@
+{"mappings":"AAEA,8CAA8C;AAC9C,qCAAqC;AAErC,kCAAkC;AAClC,QAAQ,GAAG,CAAC","sources":["src/index.ts"],"sourcesContent":["\n\n// const user1Data = {name: \"abebe\", age: 26};\n// const user1 = new User(user1Data);\n\n// console.log(user1.get(\"name\"));\nconsole.log('test');"],"names":[],"version":3,"file":"index.377278e2.js.map","sourceRoot":"/__parcel_source_root/"}
