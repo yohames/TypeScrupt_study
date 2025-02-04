@@ -598,33 +598,25 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 },{}],"h7u1C":[function(require,module,exports,__globalThis) {
 var _user = require("./Model/User");
 const user1Data = {
-    id: 1
+    id: "1"
 };
 const user1 = new (0, _user.User)(user1Data);
 // ========= GET =========
-// console.log(user1.get("name"));
+console.log(user1.get("id"));
 // ========= SET =========
 user1.set({
-    name: "Abreham",
+    name: "Manaye Abreham Latest",
     age: 27
 });
-// console.log(user1.get("name"));
+console.log(user1.get("name"));
 // ========= ON event listener =========
-user1.events.on("click", ()=>{
-    console.log("hey this is a custom event trigger");
+user1.on("change", ()=>{
+    console.log("Change detected", user1);
 });
-user1.events.trigger("click");
 // =========== Data fetching ===========
 user1.fetch();
-// setTimeout(() => {
-//   console.log("show me the user", user1);
-// }, 3000);
 // ============== Data Inserting ==============
-user1.save(); // axios.post("http://localhost:3000/users", {
- //   id: 1,
- //   name: "abebe",
- //   age: 32,
- // });
+user1.save();
 
 },{"./Model/User":"1rIh1"}],"1rIh1":[function(require,module,exports,__globalThis) {
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -679,44 +671,45 @@ user1.save(); // axios.post("http://localhost:3000/users", {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "User", ()=>User);
-var _axios = require("axios");
-var _axiosDefault = parcelHelpers.interopDefault(_axios);
 var _eventsing = require("./Eventsing");
+var _sync = require("./Sync");
+var _attributes = require("./Attributes");
 class User {
     constructor(data){
         this.data = data;
-        this.events = new (0, _eventsing.Eventing)();
+        this.Events = new (0, _eventsing.Eventing)();
+        this.Sync = new (0, _sync.Sync)("http://localhost:3000/users");
+        this.Attributes = new (0, _attributes.Atributes)(data);
     }
-    // here we are using *`keyof`* to make sure that propName is a key of UserProps; otherwise it will throw an error
-    get(propName) {
-        return this.data[propName];
+    get on() {
+        return this.Events.on;
+    }
+    get trigger() {
+        return this.Events.trigger;
+    }
+    get get() {
+        return this.Attributes.get;
     }
     set(update) {
-        Object.assign(this.data, update);
+        this.Attributes.set(update);
+        this.Events.trigger("change");
     }
-    //   on(eventName: string, callback: Callback): void {
-    //     this.events.on(eventName, callback);
-    //   }
-    //   trigger(eventName: string): void {
-    //     this.events.trigger(eventName);
-    //   }
     fetch() {
-        console.log("Show me the id:", this.get("id"));
-        // Make a request for a user with a given ID
-        (0, _axiosDefault.default).get(`http://localhost:3000/users/${this.get("id")}`).then((response)=>{
+        const id = this.Attributes.get("id");
+        if (!id) throw new Error("Can not fetch without an id");
+        this.Sync.fetch(id).then((response)=>{
             this.set(response.data);
-        }).catch(function(error) {
-            console.error(error);
         });
     }
     save() {
-        const id = this.data.id;
-        if (id) (0, _axiosDefault.default).put(`http://localhost:3000/users/${id}`, this.data);
-        else (0, _axiosDefault.default).post("http://localhost:3000/users", this.data);
+        this.Sync.save(this.Attributes.getAll()).then((response)=>{
+            // this.set(response.data); 
+            this.Events.trigger("change");
+        });
     }
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"loyoi","axios":"jo6P5","./Eventsing":"8oaBy"}],"loyoi":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"loyoi","./Eventsing":"8oaBy","./Sync":"auD8x","./Attributes":"9ATs0"}],"loyoi":[function(require,module,exports,__globalThis) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -746,7 +739,57 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"jo6P5":[function(require,module,exports,__globalThis) {
+},{}],"8oaBy":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Eventing", ()=>Eventing);
+class Eventing {
+    constructor(){
+        this.events = {};
+        this.on = (eventName, callback)=>{
+            const handler = this.events[eventName] || [];
+            handler.push(callback);
+            this.events[eventName] = handler;
+        };
+        this.trigger = (eventName)=>{
+            const handler = this.events[eventName];
+            if (!handler || !handler.length) return;
+            handler.forEach((e)=>e());
+        };
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"loyoi"}],"auD8x":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Sync", ()=>Sync);
+var _axios = require("axios");
+var _axiosDefault = parcelHelpers.interopDefault(_axios);
+class Sync {
+    /*
+  The code attempts to assign the entire object (data) to the current instance (this) inside the constructor. However, in TypeScript (and JavaScript) you cannot reassign "this" to a new value within the constructor. This will result in a compilation error because "this" is immutable and is automatically prepared for you by the class system.
+  */ /* 
+  A common approach to initialize an instance with data from an object is to copy the properties of "data" into "this". One straightforward way to do this is by using Object.assign, which copies enumerable properties from the source object to the target object.
+  */ constructor(rootUrl){
+        this.rootUrl = rootUrl;
+        this.save = (data)=>{
+            const { id } = data;
+            if (id) return (0, _axiosDefault.default).put(`${this.rootUrl}/${id}`, data);
+            else return (0, _axiosDefault.default).post(this.rootUrl, data);
+        };
+    }
+    fetch(id) {
+        // Make a request for a user with a given ID
+        return (0, _axiosDefault.default).get(`${this.rootUrl}/${id}`).then((response)=>{
+            return response.data;
+        }).catch(function(error) {
+            console.error(error);
+            return error;
+        });
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"loyoi","axios":"jo6P5"}],"jo6P5":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>(0, _axiosJsDefault.default));
@@ -5661,23 +5704,23 @@ Object.entries(HttpStatusCode).forEach(([key, value])=>{
 });
 exports.default = HttpStatusCode;
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"loyoi"}],"8oaBy":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"loyoi"}],"9ATs0":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "Eventing", ()=>Eventing);
-class Eventing {
-    on(eventName, callback) {
-        const handler = this.events[eventName] || [];
-        handler.push(callback);
-        this.events[eventName] = handler;
-    }
-    trigger(eventName) {
-        const handler = this.events[eventName];
-        if (!handler || !handler.length) return;
-        handler.forEach((e)=>e());
-    }
-    constructor(){
-        this.events = {};
+parcelHelpers.export(exports, "Atributes", ()=>Atributes);
+class Atributes {
+    constructor(data){
+        this.data = data;
+        this.// here we are using *`keyof`* to make sure that propName is a key of UserProps; otherwise it will throw an error
+        get = (propName)=>{
+            return this.data[propName];
+        };
+        this.getAll = ()=>{
+            return this.data;
+        };
+        this.set = (update)=>{
+            Object.assign(this.data, update);
+        };
     }
 }
 
