@@ -597,26 +597,31 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 
 },{}],"h7u1C":[function(require,module,exports,__globalThis) {
 var _user = require("./Model/User");
-const user1Data = {
-    id: "1"
-};
-const user1 = new (0, _user.User)(user1Data);
-// ========= GET =========
-console.log(user1.get("id"));
-// ========= SET =========
-user1.set({
-    name: "Manaye Abreham Latest",
-    age: 27
+const rootUrl = "http://localhost:3000/users";
+// const users = new Collection<User, UserProps>(rootUrl, (json: UserProps) => {
+//   return User.buildUser(json);
+// });
+const users = (0, _user.User).buildUserCollection();
+users.on("change", ()=>{
+    console.log("All Users Fetched :", users);
 });
-console.log(user1.get("name"));
-// ========= ON event listener =========
-user1.on("change", ()=>{
-    console.log("Change detected", user1);
-});
-// =========== Data fetching ===========
-user1.fetch();
-// ============== Data Inserting ==============
-user1.save();
+users.fetch(); // const user1Data = { id: "1" };
+ // const user1 = User.buildUser(user1Data);
+ // const user1 = new User(user1Data);
+ // ========= GET =========
+ // console.log(user1.get("id"));
+ // // ========= SET =========
+ // user1.set({ name: "ooooooooo Abreham Latest", age: 27 });
+ // console.log(user1.get("name"));
+ // // ========= ON event listener =========
+ // user1.on("change", () => {
+ //   console.log("Change detected", user1);
+ // });
+ // // =========== Data fetching ===========
+ // user1.fetch();
+ // // ============== Data Inserting ==============
+ // user1.save();
+ // console.log("Is user Admin:", user1.isAdminUser());
 
 },{"./Model/User":"1rIh1"}],"1rIh1":[function(require,module,exports,__globalThis) {
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -668,48 +673,65 @@ user1.save();
 // ===================================================================
 // ===================================================================
 // ===================================================================
+// import { Eventing } from "./Eventsing";
+// import { Sync } from "./Sync";
+// import { Atributes } from "./Attributes";
+// import axios, { AxiosPromise, AxiosResponse } from "axios";
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "User", ()=>User);
-var _eventsing = require("./Eventsing");
-var _sync = require("./Sync");
+var _model = require("./Model");
+var _apiSync = require("./ApiSync");
 var _attributes = require("./Attributes");
-class User {
-    constructor(data){
-        this.data = data;
-        this.Events = new (0, _eventsing.Eventing)();
-        this.Sync = new (0, _sync.Sync)("http://localhost:3000/users");
-        this.Attributes = new (0, _attributes.Atributes)(data);
+var _eventsing = require("./Eventsing");
+var _collection = require("./Collection");
+const rootUrl = "http://localhost:3000/users";
+class User extends (0, _model.Model) {
+    static buildUser(attrs) {
+        return new User(new (0, _attributes.Atributes)(attrs), new (0, _apiSync.ApiSync)(rootUrl), new (0, _eventsing.Eventing)());
     }
-    get on() {
-        return this.Events.on;
+    static buildUserCollection() {
+        return new (0, _collection.Collection)(rootUrl, (json)=>{
+            return User.buildUser(json);
+        });
     }
-    get trigger() {
-        return this.Events.trigger;
+    isAdminUser() {
+        return this.get("id") == "1";
     }
-    get get() {
-        return this.Attributes.get;
+}
+
+},{"./Model":"e4eKS","./ApiSync":"413AK","./Attributes":"9ATs0","./Eventsing":"8oaBy","./Collection":"4HqVx","@parcel/transformer-js/src/esmodule-helpers.js":"loyoi"}],"e4eKS":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Model", ()=>Model);
+class Model {
+    constructor(attributes, sync, events){
+        this.attributes = attributes;
+        this.sync = sync;
+        this.events = events;
+        this.on = this.events.on;
+        this.trigger = this.events.trigger;
+        this.get = this.attributes.get;
     }
     set(update) {
-        this.Attributes.set(update);
-        this.Events.trigger("change");
+        this.attributes.set(update);
+        this.events.trigger("change");
     }
     fetch() {
-        const id = this.Attributes.get("id");
+        const id = this.attributes.get("id");
         if (!id) throw new Error("Can not fetch without an id");
-        this.Sync.fetch(id).then((response)=>{
+        this.sync.fetch(id).then((response)=>{
             this.set(response.data);
         });
     }
     save() {
-        this.Sync.save(this.Attributes.getAll()).then((response)=>{
-            // this.set(response.data); 
-            this.Events.trigger("change");
+        this.sync.save(this.attributes.getAll()).then((response)=>{
+            this.events.trigger("change");
         });
     }
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"loyoi","./Eventsing":"8oaBy","./Sync":"auD8x","./Attributes":"9ATs0"}],"loyoi":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"loyoi"}],"loyoi":[function(require,module,exports,__globalThis) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -739,33 +761,13 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"8oaBy":[function(require,module,exports,__globalThis) {
+},{}],"413AK":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "Eventing", ()=>Eventing);
-class Eventing {
-    constructor(){
-        this.events = {};
-        this.on = (eventName, callback)=>{
-            const handler = this.events[eventName] || [];
-            handler.push(callback);
-            this.events[eventName] = handler;
-        };
-        this.trigger = (eventName)=>{
-            const handler = this.events[eventName];
-            if (!handler || !handler.length) return;
-            handler.forEach((e)=>e());
-        };
-    }
-}
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"loyoi"}],"auD8x":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "Sync", ()=>Sync);
+parcelHelpers.export(exports, "ApiSync", ()=>ApiSync);
 var _axios = require("axios");
 var _axiosDefault = parcelHelpers.interopDefault(_axios);
-class Sync {
+class ApiSync {
     /*
   The code attempts to assign the entire object (data) to the current instance (this) inside the constructor. However, in TypeScript (and JavaScript) you cannot reassign "this" to a new value within the constructor. This will result in a compilation error because "this" is immutable and is automatically prepared for you by the class system.
   */ /* 
@@ -789,7 +791,7 @@ class Sync {
     }
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"loyoi","axios":"jo6P5"}],"jo6P5":[function(require,module,exports,__globalThis) {
+},{"axios":"jo6P5","@parcel/transformer-js/src/esmodule-helpers.js":"loyoi"}],"jo6P5":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>(0, _axiosJsDefault.default));
@@ -5724,6 +5726,59 @@ class Atributes {
     }
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"loyoi"}]},["HLwa5","h7u1C"], "h7u1C", "parcelRequire94c2")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"loyoi"}],"8oaBy":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Eventing", ()=>Eventing);
+class Eventing {
+    constructor(){
+        this.events = {};
+        this.on = (eventName, callback)=>{
+            const handler = this.events[eventName] || [];
+            handler.push(callback);
+            this.events[eventName] = handler;
+        };
+        this.trigger = (eventName)=>{
+            const handler = this.events[eventName];
+            if (!handler || !handler.length) return;
+            handler.forEach((e)=>e());
+        };
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"loyoi"}],"4HqVx":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Collection", ()=>Collection);
+var _axios = require("axios");
+var _axiosDefault = parcelHelpers.interopDefault(_axios);
+var _eventsing = require("./Eventsing");
+class Collection {
+    constructor(rootUrl, decerializer){
+        this.rootUrl = rootUrl;
+        this.decerializer = decerializer;
+        this.model = [];
+        this.events = new (0, _eventsing.Eventing)();
+    }
+    get on() {
+        return this.events.on;
+    }
+    get trigger() {
+        return this.events.trigger;
+    }
+    fetch() {
+        (0, _axiosDefault.default).get(this.rootUrl).then((response)=>{
+            response.data.forEach((element)=>{
+                //   const user = User.buildUser(element);
+                this.model.push(this.decerializer(element));
+            });
+            this.trigger("change");
+        }).catch(function(error) {
+            return error;
+        });
+    }
+}
+
+},{"axios":"jo6P5","./Eventsing":"8oaBy","@parcel/transformer-js/src/esmodule-helpers.js":"loyoi"}]},["HLwa5","h7u1C"], "h7u1C", "parcelRequire94c2")
 
 //# sourceMappingURL=index.b71e74eb.js.map

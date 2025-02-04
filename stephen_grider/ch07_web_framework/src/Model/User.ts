@@ -54,10 +54,15 @@
 // ===================================================================
 // ===================================================================
 
-import { Eventing } from "./Eventsing";
-import { Sync } from "./Sync";
+// import { Eventing } from "./Eventsing";
+// import { Sync } from "./Sync";
+// import { Atributes } from "./Attributes";
+// import axios, { AxiosPromise, AxiosResponse } from "axios";
+import { Model } from "./Model";
+import { ApiSync } from "./ApiSync";
 import { Atributes } from "./Attributes";
-import axios, { AxiosPromise, AxiosResponse } from "axios";
+import { Eventing } from "./Eventsing";
+import { Collection } from "./Collection";
 
 export interface UserProps {
   id?: number | string;
@@ -66,47 +71,41 @@ export interface UserProps {
 }
 type Callback = () => void;
 
-export class User {
-  public Events: Eventing = new Eventing();
-  public Sync: Sync<UserProps> = new Sync<UserProps>(
-    "http://localhost:3000/users"
-  );
-  public Attributes: Atributes<UserProps>;
-
-  constructor(public data: UserProps) {
-    this.Attributes = new Atributes<UserProps>(data);
+const rootUrl = "http://localhost:3000/users";
+export class User extends Model<UserProps> {
+  static buildUser(attrs: UserProps): User {
+    return new User(
+      new Atributes<UserProps>(attrs),
+      new ApiSync<UserProps>(rootUrl),
+      new Eventing()
+    );
   }
 
-  get on() {
-    return this.Events.on;
-  }
-  get trigger() {
-    return this.Events.trigger;
-  }
-
-  get get() {
-    return this.Attributes.get;
-  }
-
-  set(update: UserProps) {
-    this.Attributes.set(update);
-    this.Events.trigger("change");
-  }
-
-  fetch(): void {
-    const id = this.Attributes.get("id");
-    if (!id) {
-      throw new Error("Can not fetch without an id");
-    }
-    this.Sync.fetch(id).then((response: AxiosResponse) => {
-      this.set(response.data);
+  static buildUserCollection(): Collection<User, UserProps> {
+    return new Collection<User, UserProps>(rootUrl, (json: UserProps) => {
+      return User.buildUser(json);
     });
   }
 
-  save() {
-    this.Sync.save(this.Attributes.getAll()).then((response: AxiosResponse) => {
-        // this.set(response.data); 
-        this.Events.trigger("change");
-    });
+  isAdminUser(): Boolean {
+    return this.get("id") == "1";
   }
+
+  //   static buildLocalUser(attrs: UserProps): User {
+  //     return new User(
+  //       new Atributes<UserProps>(attrs),
+  //       new LocalStorageSync<UserProps>(rootUrl),
+  //       new Eventing()
+  //     );
+  //   }
+
+  /* The Older Way Using composition */
+  //   public Events: Eventing = new Eventing();
+  //   public Sync: Sync<UserProps> = new Sync<UserProps>(
+  //     "http://localhost:3000/users"
+  //   );
+  //   public Attributes: Atributes<UserProps>;
+  //   constructor(public data: UserProps) {
+  //     this.Attributes = new Atributes<UserProps>(data);
+  //   }
 }
