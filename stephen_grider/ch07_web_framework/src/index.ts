@@ -1,17 +1,24 @@
-import { User, UserProps } from "./Model/User";
-import { Collection } from "./Model/Collection";
+import { User } from "./Model/User";
+import { UserForm } from "./View/UserForm";
 
 const rootUrl = "http://localhost:3000/users";
 
 // const users = new Collection<User, UserProps>(rootUrl, (json: UserProps) => {
 //   return User.buildUser(json);
 // });
-const users = User.buildUserCollection();
+// const users = User.buildUserCollection();
 
-users.on("change", () => {
-  console.log("All Users Fetched :", users);
-});
-users.fetch();
+// users.on("change", () => {
+//   console.log("All Users Fetched :", users);
+// });
+// users.fetch();
+
+const user = User.buildUser({ name: "ABEBE", age: 20 });
+const root = document.getElementById("root");
+if (root) {
+  const form = new UserForm(root, user);
+  form.render();
+}
 
 // const user1Data = { id: "1" };
 // const user1 = User.buildUser(user1Data);

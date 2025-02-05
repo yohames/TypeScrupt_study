@@ -597,15 +597,25 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 
 },{}],"h7u1C":[function(require,module,exports,__globalThis) {
 var _user = require("./Model/User");
+var _userForm = require("./View/UserForm");
 const rootUrl = "http://localhost:3000/users";
 // const users = new Collection<User, UserProps>(rootUrl, (json: UserProps) => {
 //   return User.buildUser(json);
 // });
-const users = (0, _user.User).buildUserCollection();
-users.on("change", ()=>{
-    console.log("All Users Fetched :", users);
+// const users = User.buildUserCollection();
+// users.on("change", () => {
+//   console.log("All Users Fetched :", users);
+// });
+// users.fetch();
+const user = (0, _user.User).buildUser({
+    name: "ABEBE",
+    age: 20
 });
-users.fetch(); // const user1Data = { id: "1" };
+const root = document.getElementById("root");
+if (root) {
+    const form = new (0, _userForm.UserForm)(root, user);
+    form.render();
+} // const user1Data = { id: "1" };
  // const user1 = User.buildUser(user1Data);
  // const user1 = new User(user1Data);
  // ========= GET =========
@@ -623,7 +633,7 @@ users.fetch(); // const user1Data = { id: "1" };
  // user1.save();
  // console.log("Is user Admin:", user1.isAdminUser());
 
-},{"./Model/User":"1rIh1"}],"1rIh1":[function(require,module,exports,__globalThis) {
+},{"./Model/User":"1rIh1","./View/UserForm":"kQaug"}],"1rIh1":[function(require,module,exports,__globalThis) {
 /////////////////////////////////////////////////////////////////////////////////////////////
 // ===================================== PROJECT DESC =======================================
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -697,6 +707,20 @@ class User extends (0, _model.Model) {
     }
     isAdminUser() {
         return this.get("id") == "1";
+    }
+    setRandomAge() {
+        function getRandomArbitrary(min, max) {
+            return Math.floor(Math.random() * (max - min) + min);
+        }
+        let randomAge = getRandomArbitrary(1, 120);
+        this.set({
+            age: randomAge
+        });
+    }
+    setName(name) {
+        this.set({
+            name
+        });
     }
 }
 
@@ -5779,6 +5803,69 @@ class Collection {
     }
 }
 
-},{"axios":"jo6P5","./Eventsing":"8oaBy","@parcel/transformer-js/src/esmodule-helpers.js":"loyoi"}]},["HLwa5","h7u1C"], "h7u1C", "parcelRequire94c2")
+},{"axios":"jo6P5","./Eventsing":"8oaBy","@parcel/transformer-js/src/esmodule-helpers.js":"loyoi"}],"kQaug":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "UserForm", ()=>UserForm);
+class UserForm {
+    constructor(parent, model){
+        this.parent = parent;
+        this.model = model;
+        this.onSetAgeClick = ()=>{
+            this.model.setRandomAge();
+        };
+        this.onSetNameClick = ()=>{
+            const input = this.parent.querySelector("input");
+            if (input) {
+                const name = input.value;
+                this.model.setName(name);
+            }
+        };
+        this.bindModal();
+    }
+    bindModal() {
+        this.model.on("change", ()=>{
+            this.render();
+        });
+    }
+    eventsMap() {
+        return {
+            "click:.setRandomAge": this.onSetAgeClick.bind(this),
+            "click:.change-name": this.onSetNameClick
+        };
+    }
+    template() {
+        return `<div>
+    <h1 style="color: green">User Form</h1>
+    <h2>Name: ${this.model.get("name")}</h2>
+    <h2>Name: ${this.model.get("age")}</h2>
+    <input/>
+    <button class="change-name">Change Name</button>
+    <button class="setRandomAge">Set Random Age</button>
+    </div>`;
+    }
+    render() {
+        this.parent.innerHTML = "";
+        const templateElement = document.createElement("template");
+        templateElement.innerHTML = this.template();
+        /*
+    Correct Order (Bind then Append):
+    If you bind before appending, the fragment still has the nodes, so your event listeners are attached correctly. 
+    When you later append the fragment, the nodes (with their event listeners) move into the DOM.
+    */ this.bindEvent(templateElement.content);
+        this.parent.append(templateElement.content);
+    }
+    bindEvent(fragment) {
+        let eventsMap = this.eventsMap();
+        for(let eventKey in eventsMap){
+            const [eventName, selector] = eventKey.split(":");
+            fragment.querySelectorAll(selector).forEach((element)=>{
+                element.addEventListener(eventName, eventsMap[eventKey]);
+            });
+        }
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"loyoi"}]},["HLwa5","h7u1C"], "h7u1C", "parcelRequire94c2")
 
 //# sourceMappingURL=index.b71e74eb.js.map

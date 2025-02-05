@@ -91,6 +91,18 @@ export class User extends Model<UserProps> {
     return this.get("id") == "1";
   }
 
+  setRandomAge(): void {
+    function getRandomArbitrary(min: number, max: number): number {
+      return Math.floor(Math.random() * (max - min) + min);
+    }
+    let randomAge = getRandomArbitrary(1, 120);
+    this.set({ age: randomAge });
+  }
+
+  setName(name: string): void {
+    this.set({ name });
+  }
+
   //   static buildLocalUser(attrs: UserProps): User {
   //     return new User(
   //       new Atributes<UserProps>(attrs),
