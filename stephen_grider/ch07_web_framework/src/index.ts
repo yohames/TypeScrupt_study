@@ -1,6 +1,5 @@
 import { User } from "./Model/User";
-import { UserForm } from "./View/UserForm";
-
+import { UserEdit } from "./View/UserEdit";
 const rootUrl = "http://localhost:3000/users";
 
 // const users = new Collection<User, UserProps>(rootUrl, (json: UserProps) => {
@@ -13,11 +12,11 @@ const rootUrl = "http://localhost:3000/users";
 // });
 // users.fetch();
 
-const user = User.buildUser({ name: "ABEBE", age: 20 });
+const user = User.buildUser({ name: "NAME", age: 20 });
 const root = document.getElementById("root");
 if (root) {
-  const form = new UserForm(root, user);
-  form.render();
+  const userEdit = new UserEdit(root, user);
+  userEdit.render();
 }
 
 // const user1Data = { id: "1" };
