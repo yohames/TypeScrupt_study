@@ -1,23 +1,32 @@
 import { User } from "./Model/User";
 import { UserEdit } from "./View/UserEdit";
+import { UserList } from "./View/UserList";
 const rootUrl = "http://localhost:3000/users";
 
 // const users = new Collection<User, UserProps>(rootUrl, (json: UserProps) => {
 //   return User.buildUser(json);
 // });
-// const users = User.buildUserCollection();
+
+const root = document.getElementById("root");
+const users = User.buildUserCollection();
+users.fetch();
+users.on("change", () => {
+  if (root) {
+    const userList = new UserList(root, users);
+    userList.render();
+  }
+});
 
 // users.on("change", () => {
 //   console.log("All Users Fetched :", users);
 // });
 // users.fetch();
 
-const user = User.buildUser({ name: "NAME", age: 20 });
-const root = document.getElementById("root");
-if (root) {
-  const userEdit = new UserEdit(root, user);
-  userEdit.render();
-}
+// const user = User.buildUser({ name: "NAME", age: 20 });
+// if (root) {
+//   const userEdit = new UserEdit(root, user);
+//   userEdit.render();
+// }
 
 // const user1Data = { id: "1" };
 // const user1 = User.buildUser(user1Data);

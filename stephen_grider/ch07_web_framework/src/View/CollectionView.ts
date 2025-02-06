@@ -1,40 +1,29 @@
-import { User, UserProps } from "../Model/User";
 import { Collection } from "../Model/Collection";
-
-
-// const users = new Collection<User, UserProps>(rootUrl, (json: UserProps) => {
-//   return User.buildUser(json);
-// });
 
 const rootUrl = "http://localhost:3000/users";
 
-export abstract class CollectionView<T> extends Collection<U, V>{
-//   public collection: T = [];
-  constructor(public parent: Element, public model: V) {
-    super(rootUrl, (json:UserProps) =>);
+export abstract class CollectionView<T, K> {
+  constructor(public parent: Element, public collection: Collection<T, K>) {
+    // this.bindModal();
   }
+
+  // bindModal(): void {
+  //   this.collection.on("change", (): void => {
+  //     this.render();
+  //   });
+  // }
 
   render(): void {
     this.parent.innerHTML = "";
+
     const templateElement = document.createElement("template");
-    templateElement.innerHTML = this.template();
+    this.collection.model.forEach((model: T) => {
+      const itemParent = document.createElement("div");
+      this.renderItem(model, itemParent);
+      templateElement.content.append(itemParent);
+    }); 
+    this.parent.append(templateElement.content); 
   }
 
-  template(): string {
-    return `
-    <div>Hello guys</div>
-    `;
-  }
-
-  abstract renderItem(): void;
+  abstract renderItem(model: T, itemParent: Element): void;
 }
-
-// this.mapRegions(templateElement.content);
-// this.onRender();
-/*
-    Correct Order (Bind then Append):
-    If you bind before appending, the fragment still has the nodes, so your event listeners are attached correctly. 
-    When you later append the fragment, the nodes (with their event listeners) move into the DOM.
-    */
-// this.bindEvent(templateElement.content);
-// this.parent.append(templateElement.content);

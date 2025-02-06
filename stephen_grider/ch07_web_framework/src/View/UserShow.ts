@@ -8,6 +8,7 @@ export class UserShow extends View<User, UserProps> {
   }
 
   public template(): string {
+    console.log(this.model.get("name"));
     return `<div>
     <h1>User Detail</h1>
     <h2>User  Name: ${this.model.get("name")}</h2>
