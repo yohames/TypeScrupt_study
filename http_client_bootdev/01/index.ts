@@ -1,38 +1,43 @@
-import type { Issue } from './types';
+// import type { Issue } from './types';
 
-async function main() {
-  const issues = await getIssueData();
-  logIssues(issues);
-}
+// async function main() {
+//   const issues = await getIssueData();
+//   logIssues(issues);
+// }
 
-main();
+// main();
 
-// don't touch below this line
+// // don't touch below this line
 
-async function getIssueData(): Promise<Issue[]> {
-  const apiKey = generateKey();
-  const response = await fetch('https://api.boot.dev/v1/courses_rest_api/learn-http/issues', {
-    method: 'GET',
-    mode: 'cors',
-    headers: {
-      'X-API-Key': apiKey,
-      'Content-Type': 'application/json',
-    },
-  });
-  return response.json();
-}
+// async function getIssueData(): Promise<Issue[]> {
+//   const apiKey = generateKey();
+//   const response = await fetch('https://api.boot.dev/v1/courses_rest_api/learn-http/issues', {
+//     method: 'GET',
+//     mode: 'cors',
+//     headers: {
+//       'X-API-Key': apiKey,
+//       'Content-Type': 'application/json',
+//     },
+//   });
+//   return response.json();
+// }
 
-function generateKey(): string {
-  const characters = 'ABCDEF0123456789';
-  let result = '';
-  for (let i = 0; i < 16; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return result;
-}
+// function generateKey(): string {
+//   const characters = 'ABCDEF0123456789';
+//   let result = '';
+//   for (let i = 0; i < 16; i++) {
+//     result += characters.charAt(Math.floor(Math.random() * characters.length));
+//   }
+//   return result;
+// }
 
-function logIssues(issues: Issue[]): void {
-  for (const issue of issues) {
-    console.log(issue.title);
-  }
-}
+// function logIssues(issues: Issue[]): void {
+//   for (const issue of issues) {
+//     console.log(issue.title);
+//   }
+// }
+
+const urlObj = new URL('https://homestarrunner.com/toons')
+
+const hostname = urlObj.hostname
+console.log(hostname) // homestarrunner.com
